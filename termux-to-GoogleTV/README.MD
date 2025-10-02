@@ -1,183 +1,273 @@
-За Google TV с Termux ето пълния списък с необходимите пакети и Debian команди:
+# 📺 Android TV PowerTools Suite 🚀
 
-## 📦 НЕОБХОДИМИ ПАКЕТИ ЗА TERMUX (Google TV)
+**Repository за пълна автоматизация и контрол на Android TV/Google TV устройства чрез Termux**
 
-### Основни системни пакети:
+---
+
+## 📦 ПАКЕТИ И ТЕХНАТА РОЛЯ
+
+### 🏗️ **ОСНОВНИ СИСТЕМНИ ПАКЕТИ** (*Задължителни*)
+
 ```bash
-pkg update && pkg upgrade -y
-pkg install -y \
-    python \
-    nodejs \
-    git \
-    wget \
-    curl \
-    openssh \
-    termux-api \
-    ffmpeg \
-    vim \
-    nano \
-    htop \
-    neofetch
+pkg install -y python nodejs git wget curl openssh ffmpeg vim htop neofetch
 ```
 
-### Мрежови инструменти:
+| Пакет | Роля 🎯 | Задължителен? |
+|-------|---------|---------------|
+| `python` | Автоматизация и скриптове | ✅ **ДА** |
+| `openssh` | Отдалечен достъп до TV | ✅ **ДА** |
+| `git` | Инсталиране на репозитории | ✅ **ДА** |
+| `ffmpeg` | Медийна обработка | ✅ **ДА** |
+| `htop` | Мониторинг на системата | ✅ **ДА** |
+
+**Пример**: 📹
 ```bash
-pkg install -y \
-    nmap \
-    net-tools \
-    dnsutils \
-    tcpdump \
-    openssl \
-    iperf3
+# Конвертиране на видео за TV с ffmpeg
+ffmpeg -i input.mp4 -c:v libx264 -profile:v high -level 4.0 output_tv.mp4
 ```
 
-### Медийни и TV-специфични пакети:
+---
+
+### 🌐 **МРЕЖОВИ ИНСТРУМЕНТИ** (*Препоръчителни*)
+
 ```bash
-pkg install -y \
-    yt-dlp \
-    python3 \
-    pip \
-    jq \
-    xmlstarlet
+pkg install -y nmap net-tools dnsutils tcpdump openssl
 ```
 
-### Допълнителни полезни пакети:
+| Пакет | Роля 🎯 | Важност |
+|-------|---------|----------|
+| `nmap` | Сканиране на мрежата | 🔍 **ВИСОКА** |
+| `net-tools` | Мрежова диагностика | 🔧 **СРЕДНА** |
+| `tcpdump` | Анализ на мрежов трафик | 🕵️ **СРЕДНА** |
+
+**Пример**: 🔍
 ```bash
-pkg install -y \
-    termux-tools \
-    termux-services \
-    termux-exec \
-    proot \
-    root-repo \
-    x11-repo
+# Откриване на всички устройства в мрежата
+nmap -sn 192.168.1.0/24
 ```
 
-## 🐧 DEBIAN КОМАНДИ (через proot)
+---
 
-### Инсталиране на Debian в Termux:
+### 📺 **TV-СПЕЦИФИЧНИ ПАКЕТИ** (*Специализирани*)
+
+```bash
+pkg install -y yt-dlp python3 pip jq xmlstarlet termux-api
+```
+
+| Пакет | Роля 🎯 | Уникална полза |
+|-------|---------|----------------|
+| `yt-dlp` | Сваляне на видео | 🎥 *Сваля YouTube съдържание* |
+| `termux-api` | Интеграция с Android | 📱 *Достъп до хардуер* |
+| `jq` | JSON обработка | 📊 *Анализ на API отговори* |
+
+---
+
+## 🐧 **DEBIAN СРЕДА** (*Разширени възможности*)
+
+### 🏗️ Инсталация:
 ```bash
 pkg install proot-distro
 proot-distro install debian
 proot-distro login debian
 ```
 
-### Debian пакети за Google TV:
+### 🛠️ Debian пакети:
 ```bash
-# В Debian environment
-apt update && apt upgrade -y
-apt install -y \
-    adb \
-    android-tools-adb \
-    android-tools-fastboot \
-    scrcpy \
-    vlc \
-    mediainfo \
-    smartmontools
+apt install -y adb android-tools-adb scrcpy vlc
 ```
 
-### Специфични инструменти за TV:
-```bash
-# ADB контрол на TV
-apt install -y android-sdk-platform-tools-common
+| Пакет | Роля 🎯 | Магия ✨ |
+|-------|---------|----------|
+| `adb` | Android Debug Bridge | 📱 *Пълен контрол над TV* |
+| `scrcpy` | Екранно отразяване | 🖥️ *TV екран на телефон* |
+| `vlc` | Медиен сървър | 🎬 *Стрийминг на файлове* |
 
-# Мрежови сканери
-apt install -y ettercap-text-only wireshark-cli
+---
 
-# Системни монитори
-apt install -y iotop iftop nethogs
-```
+## 🚀 **СКРИПТОВЕ И ТЕХНАТА РОЛЯ**
 
-## 🔧 GOOGLE TV СПЕЦИФИЧНИ КОМАНДИ
-
-### ADB команди за контрол на TV:
-```bash
-# Списък на свързани устройства
-adb devices
-
-# Информация за TV
-adb shell getprop ro.product.model
-adb shell getprop ro.build.version.sdk
-
-# Скрийншот от TV
-adb exec-out screencap -p > screenshot.png
-
-# Инсталиране на APK
-adb install app.apk
-
-# Деинсталиране на приложение
-adb uninstall com.package.name
-```
-
-### Мрежови команди за TV:
-```bash
-# Проверка на мрежовата конфигурация
-adb shell ifconfig
-adb shell netstat -tulpn
-
-# Ping тестове
-adb shell ping -c 4 google.com
-```
-
-### Системни команди за TV:
-```bash
-# Информация за паметта
-adb shell cat /proc/meminfo
-
-# Информация за CPU
-adb shell cat /proc/cpuinfo
-
-# Температура на системата
-adb shell cat /sys/class/thermal/thermal_zone*/temp
-```
-
-## 🚀 SCRCPY (екран на TV към Termux)
-
-### Инсталиране на scrcpy в Debian:
-```bash
-# В Debian environment
-apt install -y scrcpy
-
-# Стартиране на scrcpy
-scrcpy --max-size 800 --bit-rate 2M --max-fps 30
-```
-
-## 📱 TERMUX API КОМАНДИ ЗА TV
-
-### Контрол на TV през Termux:
-```bash
-# Информация за батерията (ако е приложимо)
-termux-battery-status
-
-# Вибрация (ако TV поддържа)
-termux-vibrate
-
-# Камера и микрофон (ако са налични)
-termux-camera-photo
-termux-microphone-record
-```
-
-## 🛠️ ПОЛЕЗНИ СКРИПТОВЕ ЗА GOOGLE TV
-
-### Скрипт за системен монитор:
+### 1. **🛡️ TV System Guardian** (`tv_guardian.sh`)
 ```bash
 #!/bin/bash
-echo "=== GOOGLE TV SYSTEM INFO ==="
-echo "Model: $(adb shell getprop ro.product.model)"
-echo "Android: $(adb shell getprop ro.build.version.release)"
-echo "IP Address: $(adb shell ip addr show wlan0 | grep 'inet ' | awk '{print $2}')"
-echo "Storage: $(adb shell df -h /data | tail -1 | awk '{print $4}') free"
-echo "Memory: $(adb shell free -m | grep Mem: | awk '{print $4}') MB free"
-```
+# 🛡️ МОНИТОРИНГ И ЗАЩИТА НА TV СИСТЕМАТА
+echo "🛡️ Starting TV System Guardian..."
 
-### Скрипт за бърза инсталация на всичко:
+# Проверка на паметта
+MEMORY=$(adb shell free -m | grep Mem: | awk '{print $4}')
+echo "🧠 Available Memory: ${MEMORY}MB"
+
+# Проверка на хранилището
+STORAGE=$(adb shell df -h /data | tail -1 | awk '{print $4}')
+echo "💾 Available Storage: ${STORAGE}"
+
+# Температурен мониторинг
+TEMP=$(adb shell cat /sys/class/thermal/thermal_zone*/temp 2>/dev/null | head -1)
+if [ -n "$TEMP" ]; then
+    TEMP_C=$((TEMP/1000))
+    echo "🌡️ CPU Temperature: ${TEMP_C}°C"
+fi
+```
+**🎯 Роля**: Постоянен мониторинг на здравето на системата
+
+---
+
+### 2. **🎮 ADB Remote Controller** (`adb_controller.sh`)
 ```bash
 #!/bin/bash
-echo "Installing all packages for Google TV..."
+# 🎮 ПЪЛЕН КОНТРОЛ НА TV ПРЕЗ ADB
+echo "🎮 ADB Remote Controller Started"
+
+case $1 in
+    "screenshot")
+        adb exec-out screencap -p > screenshot_$(date +%Y%m%d_%H%M%S).png
+        echo "📸 Screenshot saved!"
+        ;;
+    "install")
+        adb install $2
+        echo "📦 App installed: $2"
+        ;;
+    "uninstall")
+        adb uninstall $2
+        echo "🗑️ App removed: $2"
+        ;;
+    "reboot")
+        adb reboot
+        echo "🔃 TV Rebooting..."
+        ;;
+    *)
+        echo "❌ Usage: $0 {screenshot|install apk|uninstall package|reboot}"
+        ;;
+esac
+```
+**🎯 Роля**: Бърз контрол на TV без remote
+
+---
+
+### 3. **📡 Network Scanner** (`network_scanner.sh`)
+```bash
+#!/bin/bash
+# 📡 ДЕТАЙЛЕН АНАЛИЗ НА МРЕЖАТА
+echo "📡 Starting Network Analysis..."
+
+# TV IP адрес
+TV_IP=$(adb shell ip addr show wlan0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1)
+echo "📺 TV IP Address: $TV_IP"
+
+# Сканиране на мрежата
+NETWORK=$(echo $TV_IP | cut -d. -f1-3)
+echo "🌐 Scanning network: ${NETWORK}.0/24"
+
+nmap -sn ${NETWORK}.0/24 | grep -E "Nmap scan|MAC Address"
+```
+**🎯 Роля**: Откриване на всички устройства в мрежата
+
+---
+
+### 4. **🎥 Media Downloader** (`media_downloader.sh`)
+```bash
+#!/bin/bash
+# 🎥 АВТОМАТИЗИРАНО СВАЛЯНЕ НА МЕДИЯ
+echo "🎥 Media Downloader Activated"
+
+URL=$1
+QUALITY=${2:-"best"}
+
+if [ -z "$URL" ]; then
+    echo "❌ Usage: $0 <YouTube_URL> [quality]"
+    exit 1
+fi
+
+echo "📥 Downloading: $URL"
+echo "🎬 Quality: $QUALITY"
+
+yt-dlp -f "$QUALITY" -o "~/storage/downloads/%(title)s.%(ext)s" "$URL"
+
+echo "✅ Download complete! Check ~/storage/downloads/"
+```
+**🎯 Роля**: Лесно сваляне на видео съдържание
+
+---
+
+### 5. **🔄 Auto-Updater** (`auto_updater.sh`)
+```bash
+#!/bin/bash
+# 🔄 АВТОМАТИЧНА АКТУАЛИЗАЦИЯ НА ВСИЧКО
+echo "🔄 Starting System Update..."
+
+# Актуализация на Termux пакети
+echo "📦 Updating Termux packages..."
 pkg update && pkg upgrade -y
-pkg install -y python nodejs git wget curl openssh ffmpeg vim htop neofetch nmap net-tools termux-api
-pkg install proot-distro
+
+# Актуализация на YouTube-DL
+echo "🎥 Updating yt-dlp..."
+pip install --upgrade yt-dlp
+
+# Актуализация на Debian пакети
+echo "🐧 Updating Debian packages..."
+proot-distro login debian -- apt update && apt upgrade -y
+
+echo "✅ All systems updated!"
+```
+**🎯 Роля**: Поддържа всичко актуално автоматично
+
+---
+
+## 🎯 **ЗАДЪЛЖИТЕЛНИ СКРИПТОВЕ**
+
+### ✅ **Must-Have** (Трябва да ги имате):
+1. **`tv_guardian.sh`** - Здравето на TV е най-важно! 🛡️
+2. **`auto_updater.sh`** - Без сигурност няма стабилност! 🔄
+3. **`adb_controller.sh`** - Основен контрол на устройството! 🎮
+
+### 💡 **Nice-to-Have** (Добре е да ги имате):
+4. **`network_scanner.sh`** - За мрежови ентусиасти! 📡
+5. **`media_downloader.sh`** - За любители на съдържание! 🎥
+
+---
+
+## 🚀 **БЪРЗ СТАРТ**
+
+### Инсталирайте всичко с един скрипт:
+```bash
+#!/bin/bash
+echo "🚀 Installing Android TV PowerTools Suite..."
+pkg update && pkg upgrade -y
+pkg install -y python openssh git ffmpeg htop nmap yt-dlp termux-api proot-distro
 proot-distro install debian
-echo "Installation complete!"
+echo "✅ Installation Complete! Ready for TV domination! 📺"
 ```
 
-Тези пакети и команди ще ви дадат пълен контрол над Google TV през Termux! 📺💻
+---
+
+## 📊 **ВИЗУАЛНА ПРЕДСТАВА**
+
+```
+Android TV PowerTools Suite 📺
+├── 🛡️ System Health
+│   ├── Memory Monitor 🧠
+│   ├── Storage Watchdog 💾
+│   └── Temperature Guard 🌡️
+├── 🎮 Remote Control
+│   ├── ADB Commander 📱
+│   ├── Screen Mirroring 🖥️
+│   └── App Manager 📦
+├── 🌐 Network Tools
+│   ├── Device Scanner 🔍
+│   ├── Traffic Analyzer 📊
+│   └── Speed Tester 🚀
+└── 🎥 Media Center
+    ├── Video Downloader 📥
+    ├── Format Converter 🔄
+    └── Stream Server 📡
+```
+
+---
+
+## ⚠️ **ВАЖНИ ЗАБЕЛЕЖКИ**
+
+- 🔒 **Сигурност**: Винаги сменете паролата на SSH!
+- 📶 **Мрежа**: TV трябва да е в същата мрежа като управляващото устройство
+- 🔋 **Батерия**: Някои функции може да консумират повече енергия
+- ⚡ **Производителност**: Сложните скриптове може да забавят TV
+
+**🎉 Честито! Вече имате пълен контрол над вашия Android TV! 🎉**
