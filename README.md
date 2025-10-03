@@ -22,6 +22,15 @@ pkg install -y \
 
 ```bash
 pkg install -y nmap net-tools dnsutils openssl iperf3
+pkg install root-repo
+pkg install tcpdump
+pkg install -y termux-tools netcat-openbsd
+```
+
+
+```bash
+uname -a
+pkg list-installed | grep tcp
 ```
 
 
