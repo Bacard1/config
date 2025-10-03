@@ -147,14 +147,27 @@ adb shell cat /sys/class/thermal/thermal_zone*/temp
 
 ## 🚀 SCRCPY (екран на TV към Termux)
 
-### Инсталиране на scrcpy в Debian:
-```bash
-# В Debian environment
+Solution 1: Install from Debian repositories (if using Debian/Ubuntu)
+bash
+apt update
 apt install -y scrcpy
+Solution 2: Install via Snap (if available)
+bash
+apt install -y snapd
+snap install scrcpy
+Solution 3: Download and install the pre-built binary
+bash
+# Download the latest release
+wget https://github.com/Genymobile/scrcpy/releases/download/v2.4/scrcpy-server-v2.4
+wget https://github.com/Genymobile/scrcpy/releases/download/v2.4/scrcpy-x64-v2.4.tar.gz
 
-# Стартиране на scrcpy
-scrcpy --max-size 800 --bit-rate 2M --max-fps 30
-```
+# Extract and install
+tar -xzf scrcpy-x64-v2.4.tar.gz
+cp scrcpy-x64-v2.4/scrcpy /usr/local/bin/
+cp scrcpy-server-v2.4 /usr/local/share/scrcpy/scrcpy-server
+
+# Make executable
+chmod +x /usr/local/bin/scrcpy
 
 ## 📱 TERMUX API КОМАНДИ ЗА TV
 
