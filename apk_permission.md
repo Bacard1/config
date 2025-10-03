@@ -114,26 +114,58 @@ echo "$(date): Boot completed" >> /data/data/com.termux/files/home/boot.log
 
 ```
 
+4. Направете скрипта изпълним:
 
 ```bash
-
-
-```
-```bash
-
+chmod +x ~/.termux/boot/myservice
 
 ```
 
+5. Проверка на скриптовете:
 
 ```bash
-
-
-```
-```bash
-
+ls -la ~/.termux/boot/
 
 ```
 
+6. Чрез ADB команди (ако искате да създадете направо):
+Можете да създадете скрипта директно чрез ADB:
 
+```bash
+adb shell "echo '#!/data/data/com.termux/files/usr/bin/sh' > /data/data/com.termux/files/home/.termux/boot/myscript"
+adb shell "echo 'echo \\\"Boot completed\\\" > /data/data/com.termux/files/home/boot.log' >> /data/data/com.termux/files/home/.termux/boot/myscript"
+adb shell "chmod +x /data/data/com.termux/files/home/.termux/boot/myscript"
 
+```
+
+7. Тестване на boot скрипта:
+Ръчно тестване:
+
+```bash
+~/.termux/boot/myservice
+
+```
+
+8. Важни бележки:
+Скриптовете трябва да започват с #!/data/data/com.termux/files/usr/bin/sh
+
+Всички скриптове трябва да са изпълними (chmod +x)
+
+Използвайте & в края на командите за да се изпълняват във фонов режим
+
+Скриптовете се изпълняват автоматично при стартиране на устройството
+
+9. Пример за Home Assistant скрипт:
+Ако искате Termux да комуникира с Home Assistant при стартиране:
+
+```bash
+#!/data/data/com.termux/files/usr/bin/sh
+# Home Assistant integration boot script
+
+echo "$(date): HA Integration started" >> /data/data/com.termux/files/home/ha_boot.log
+
+# Start your Home Assistant related services here
+# python /data/data/com.termux/files/home/ha_bridge.py &
+
+```
 
