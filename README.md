@@ -31,6 +31,7 @@ pkg install -y termux-tools netcat-openbsd
 ```bash
 uname -a
 pkg list-installed | grep tcp
+pkg install -y python python-pip yt-dlp jq xmlstarlet
 ```
 
 
