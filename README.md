@@ -20,6 +20,11 @@ pkg install -y \
     neofetch
 ```
 
+```bash
+pkg install -y nmap net-tools dnsutils openssl iperf3
+```
+
+
 ### Мрежови инструменти:
 ```bash
 pkg install -y \
