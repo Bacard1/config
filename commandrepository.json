@@ -1,4 +1,10 @@
 {
   "version": 1,
-  "categories": []
+  "categories": [
+    {
+      "id": "f738bbb6-46d5-46a2-8c12-b94ecf3db1ba",
+      "label": "global",
+      "children": []
+    }
+  ]
 }
