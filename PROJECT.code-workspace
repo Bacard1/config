@@ -1,0 +1,35 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "Z:/"
+		},
+		{
+			"path": "../.."
+		}
+	],
+	"settings": {
+		"workbench.colorCustomizations": {
+			"activityBar.background": "#4C1554",
+			"titleBar.activeBackground": "#6A1D76",
+			"titleBar.activeForeground": "#FEFCFE"
+		},
+		"folder-customization.folders": [
+			{
+				"path": "y:\\PROJECT\\",
+				"color": "foldercustomization.AnsiColor201",
+				"badge": "⛑️"
+			},
+			{
+				"path": "PROJECT\\",
+				"color": "foldercustomization.AnsiColor201"
+			},
+			{
+				"path": "z:\\\\",
+				"badge": "HA"
+			}
+		]
+	}
+}

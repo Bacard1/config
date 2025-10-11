@@ -4,7 +4,16 @@
     {
       "id": "f738bbb6-46d5-46a2-8c12-b94ecf3db1ba",
       "label": "global",
-      "children": []
+      "children": [
+        {
+          "id": "eeb70b2c-3274-4f3e-8fee-72784ea3db09",
+          "label": "ssh root@192.168.50.4",
+          "command": "ssh root@192.168.50.4",
+          "parameter": "",
+          "description": "",
+          "name": "ssh connection HASS"
+        }
+      ]
     }
   ]
 }
