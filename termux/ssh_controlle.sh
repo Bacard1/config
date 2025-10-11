@@ -13,13 +13,17 @@ show_menu() {
     #----------------------------------------------------------#
     echo "2. Задаване на парола и SSH ключ/нов потребител"
     #----------------------------------------------------------#
-    # add key to authorized_keys
-    #----------------------------------------------------------#
-    echo "3. Добавяне на ключ в authorized_keys"
-    #----------------------------------------------------------#
     # setup termux boot and services
     #----------------------------------------------------------#
-    echo "4. Настройка на Termux:Boot и услуги"
+    echo "3. Настройка на Termux:Boot и услуги"
+    #----------------------------------------------------------#
+    # show ssh keys
+    #----------------------------------------------------------#
+    echo "4. Покажи SSH ключове"
+    #----------------------------------------------------------#
+    # add key to authorized_keys
+    #----------------------------------------------------------#
+    echo "5. Добавяне на ключ в authorized_keys"
     echo "0. Изход"
     echo
 }
@@ -86,44 +90,6 @@ set_password_and_sshkey() {
     echo ""
     echo "Съдържание на публичния ключ:"
     cat "${key_file}.pub"
-}
-
-#----------------------------------------------------------#
-# add key to authorized_keys
-#----------------------------------------------------------#
-add_to_authorized_keys() {
-    echo "=== Добавяне на ключ в authorized_keys ==="
-    
-    # Проверка дали директорията .ssh съществува
-    if [ ! -d ~/.ssh ]; then
-        mkdir -p ~/.ssh
-        chmod 700 ~/.ssh
-    fi
-    
-    # Проверка дали authorized_keys файла съществува, ако не - създаваме го
-    if [ ! -f ~/.ssh/authorized_keys ]; then
-        touch ~/.ssh/authorized_keys
-        chmod 600 ~/.ssh/authorized_keys
-        echo "Създаден е нов файл ~/.ssh/authorized_keys"
-    fi
-    
-    echo "Въведете SSH публичния ключ (целия ред):"
-    read ssh_key
-    
-    if [ -n "$ssh_key" ]; then
-        # Добавяне на ключа в authorized_keys
-        echo "$ssh_key" >> ~/.ssh/authorized_keys
-        echo "Ключът е добавен успешно в ~/.ssh/authorized_keys"
-        
-        # Показване на съдържанието на authorized_keys
-        echo ""
-        echo "Съдържание на authorized_keys:"
-        echo "================================"
-        cat ~/.ssh/authorized_keys
-        echo "================================"
-    else
-        echo "Не сте въвели ключ!"
-    fi
 }
 
 #----------------------------------------------------------#
@@ -204,9 +170,91 @@ EOF
     echo "За да деактивирате автоматичното стартиране: sv-disable sshd"
 }
 
+#----------------------------------------------------------#
+# show ssh keys
+#----------------------------------------------------------#
+show_ssh_keys() {
+    echo "=== ПРОВЕРКА НА SSH ПУБЛИЧНИ КЛЮЧОВЕ ==="
+    echo ""
+    
+    # Проверка дали директорията .ssh съществува
+    if [ ! -d ~/.ssh ]; then
+        echo "Директорията ~/.ssh не съществува!"
+        echo "Няма генерирани SSH ключове."
+        return
+    fi
+    
+    # Намиране на всички .pub файлове
+    pub_files=$(find ~/.ssh -name "*.pub" -type f)
+    
+    if [ -z "$pub_files" ]; then
+        echo "Няма намерени публични SSH ключове (.pub файлове) в ~/.ssh/"
+        return
+    fi
+    
+    # Брой на намерените файлове
+    count=$(echo "$pub_files" | wc -l)
+    echo "Намерени са $count публични SSH ключ(a) в ~/.ssh/:"
+    echo ""
+    
+    # Показване на съдържанието на всеки файл
+    i=1
+    echo "$pub_files" | while read -r pub_file; do
+        echo "--- Файл $i: $pub_file ---"
+        echo "Съдържание:"
+        cat "$pub_file"
+        echo ""
+        echo "--- Край на файл $i ---"
+        echo ""
+        i=$((i + 1))
+    done
+    
+    # Показване на списък с всички файлове в .ssh
+    echo "=== ВСИЧКИ ФАЙЛОВЕ В ~/.ssh/ ==="
+    ls -la ~/.ssh/
+}
+
+#----------------------------------------------------------#
+# add key to authorized_keys
+#----------------------------------------------------------#
+add_to_authorized_keys() {
+    echo "=== Добавяне на ключ в authorized_keys ==="
+    
+    # Проверка дали директорията .ssh съществува
+    if [ ! -d ~/.ssh ]; then
+        mkdir -p ~/.ssh
+        chmod 700 ~/.ssh
+    fi
+    
+    # Проверка дали authorized_keys файла съществува, ако не - създаваме го
+    if [ ! -f ~/.ssh/authorized_keys ]; then
+        touch ~/.ssh/authorized_keys
+        chmod 600 ~/.ssh/authorized_keys
+        echo "Създаден е нов файл ~/.ssh/authorized_keys"
+    fi
+    
+    echo "Въведете SSH публичния ключ (целия ред):"
+    read ssh_key
+    
+    if [ -n "$ssh_key" ]; then
+        # Добавяне на ключа в authorized_keys
+        echo "$ssh_key" >> ~/.ssh/authorized_keys
+        echo "Ключът е добавен успешно в ~/.ssh/authorized_keys"
+        
+        # Показване на съдържанието на authorized_keys
+        echo ""
+        echo "Съдържание на authorized_keys:"
+        echo "================================"
+        cat ~/.ssh/authorized_keys
+        echo "================================"
+    else
+        echo "Не сте въвели ключ!"
+    fi
+}
+
 while true; do
     show_menu
-    read -p "Изберете опция [0-4]: " choice
+    read -p "Изберете опция [0-5]: " choice
     case $choice in
         #----------------------------------------------------------#
         # install openssh
@@ -221,16 +269,22 @@ while true; do
             set_password_and_sshkey
             ;;
         #----------------------------------------------------------#
-        # add key to authorized_keys
-        #----------------------------------------------------------#
-        3)
-            add_to_authorized_keys
-            ;;
-        #----------------------------------------------------------#
         # setup termux boot and services
         #----------------------------------------------------------#
-        4)
+        3)
             setup_boot_services
+            ;;
+        #----------------------------------------------------------#
+        # show ssh keys
+        #----------------------------------------------------------#
+        4)
+            show_ssh_keys
+            ;;
+        #----------------------------------------------------------#
+        # add key to authorized_keys
+        #----------------------------------------------------------#
+        5)
+            add_to_authorized_keys
             ;;
         0)
             echo "Довиждане!"
