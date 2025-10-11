@@ -130,171 +130,78 @@ add_to_authorized_keys() {
 # setup termux boot and services
 #----------------------------------------------------------#
 setup_boot_services() {
-    echo "=== Настройка на Termux:Boot и услуги ==="
+    echo "=== Настройка на Termux:Boot и SSH услуга ==="
     echo ""
     
-    # Информация за Termux:Boot
-    echo "1. Информация за Termux:Boot инсталация"
-    echo "2. Създаване на boot директория и скриптове"
-    echo "3. Инсталиране на termux-services"
-    echo "4. Управление на услуги (sshd и др.)"
-    echo "5. Създаване на стартиращ скрипт за SSH"
-    echo "0. Назад към главното меню"
+    # Проверка за Termux:Boot
+    echo "=== ПРОВЕРКА ЗА TERMUX:BOOT ==="
+    read -p "Инсталирахте ли Termux:Boot от F-Droid? (да/не): " termux_boot_installed
+    
+    case $termux_boot_installed in
+        [Дд]а|[Yy]es|"")
+            echo "Продължавам с настройката..."
+            ;;
+        [Нн]е|[Nn]o)
+            echo "Моля, инсталирайте Termux:Boot от F-Droid преди да продължите."
+            echo "След инсталацията, стартирайте приложението веднъж и се върнете тук."
+            return
+            ;;
+        *)
+            echo "Неразбран отговор. Предполагам, че сте инсталирали Termux:Boot."
+            ;;
+    esac
+    
+    echo ""
+    echo "=== ИНСТАЛИРАНЕ НА TERMUX-SERVICES ==="
+    pkg install termux-services -y
     echo ""
     
-    read -p "Изберете опция [0-5]: " boot_choice
+    echo "=== СТАРТИРАНЕ НА SERVICE-DAEMON ==="
+    service-daemon start
+    echo ""
     
-    case $boot_choice in
-        1)
-            echo ""
-            echo "=== ИНФОРМАЦИЯ ЗА TERMUX:BOOT ==="
-            echo "1. Инсталирайте Termux:Boot от F-Droid"
-            echo "2. Изключете оптимизациите за батерията за Termux и Termux:Boot"
-            echo "3. Стартирайте Termux:Boot веднъж от иконката"
-            echo "4. Създайте ~/.termux/boot/ директория"
-            echo "5. Добавете скриптове в ~/.termux/boot/ за изпълнение при стартиране"
-            echo ""
-            echo "ВАЖНО: Не смесвайте инсталации от Google Play и F-Droid!"
-            ;;
-            
-        2)
-            echo ""
-            echo ""
-            echo "=== СЪЗДАВАНЕ НА BOOT ДИРЕКТОРИЯ ==="
-            if [ ! -d ~/.termux/boot ]; then
-                mkdir -p ~/.termux/boot
-                echo "Създадена е директория ~/.termux/boot/"
-            else
-                echo "Директорията ~/.termux/boot/ вече съществува"
-            fi
-            echo "Добавете вашите скриптове в тази директория за изпълнение при стартиране"
-            ;;
-            
-        3)
-            echo ""
-            echo "=== ИНСТАЛИРАНЕ НА TERMUX-SERVICES ==="
-            pkg install termux-services -y
-            echo ""
-            echo "Стартирам service-daemon."
-            service-daemon start
-            echo "След рестартиране, можете да управлявате услугите с:"
-            echo "  sv-enable <service>   - за постоянно включване"
-            echo "  sv up <service>       - за еднократно стартиране"
-            echo "  sv down <service>     - за спиране"
-            echo "  sv-disable <service>  - за изключване"
-            ;;
-            
-        4)
-            while true; do
-                echo ""
-                echo "=== УПРАВЛЕНИЕ НА УСЛУГИ ==="
-                echo "1. Активиране на sshd услуга"
-                echo "2. Деактивиране на sshd услуга"
-                echo "3. Стартиране на sshd услуга"
-                echo "4. Спиране на sshd услуга"
-                echo "5. Статус на услугите"
-                echo "6. Стартиране на услуга по избор"
-                echo "0. Назад"
-                echo ""
-                
-                read -p "Изберете опция [0-6]: " service_choice
-                
-                case $service_choice in
-                    1)
-                        sv-enable sshd
-                        echo "sshd услугата е активирана"
-                        ;;
-                    2)
-                        sv-disable sshd
-                        echo "sshd услугата е деактивирана"
-                        ;;
-                    3)
-                        sv up sshd
-                        echo "sshd услугата е стартирана"
-                        ;;
-                    4)
-                        sv down sshd
-                        echo "sshd услугата е спряна"
-                        ;;
-                    5)
-                        echo "=== СТАТУС НА УСЛУГИТЕ ==="
-                        sv status
-                        ;;
-                    6)
-                        echo ""
-                        echo "=== СТАРТИРАНЕ НА УСЛУГА ПО ИЗБОР ==="
-                        echo "Някои възможни услуги:"
-                        echo "  - sshd (SSH сървър)"
-                        echo "  - ftpd (FTP сървър)"
-                        echo "  - telnetd (Telnet сървър)"
-                        echo "  - httpd (Apache web сървър)"
-                        echo "  - nginx (Nginx web сървър)"
-                        echo "  - mysqld (MariaDB/MySQL сървър)"
-                        echo "  - postgres (PostgreSQL сървър)"
-                        echo "  - tor (Tor услуга)"
-                        echo ""
-                        read -p "Въведете име на услугата: " service_name
-                        
-                        if [ -n "$service_name" ]; then
-                            echo "Стартиране на услуга: $service_name"
-                            sv up "$service_name"
-                            echo "Статус на услугата $service_name:"
-                            sv status "$service_name"
-                        else
-                            echo "Не сте въвели име на услуга!"
-                        fi
-                        ;;
-                    0)
-                        break
-                        ;;
-                    *)
-                        echo "Невалиден избор!"
-                        ;;
-                esac
-                
-                echo
-                read -p "Натиснете Enter за да продължите..."
-                echo
-            done
-            ;;
-            
-        5)
-            echo ""
-            echo "=== СЪЗДАВАНЕ НА СТАРТИРАЩ СКРИПТ ЗА SSH ==="
-            
-            # Създаване на boot директория ако не съществува
-            if [ ! -d ~/.termux/boot ]; then
-                mkdir -p ~/.termux/boot
-            fi
-            
-            # Създаване на скрипта
-            cat > ~/.termux/boot/start-sshd << 'EOF'
+    echo "=== АКТИВИРАНЕ НА SSH УСЛУГАТА ==="
+    sv-enable sshd
+    echo "SSH услугата е активирана за автоматично стартиране"
+    echo ""
+    
+    echo "=== СТАРТИРАНЕ НА SSH УСЛУГАТА ==="
+    sv up sshd
+    echo "SSH услугата е стартирана"
+    echo ""
+    
+    echo "=== СТАТУС НА SSH УСЛУГАТА ==="
+    sv status sshd
+    echo ""
+    
+    echo "=== СЪЗДАВАНЕ НА BOOT ДИРЕКТОРИЯ И СКРИПТ ==="
+    # Създаване на boot директория ако не съществува
+    if [ ! -d ~/.termux/boot ]; then
+        mkdir -p ~/.termux/boot
+        echo "Създадена е директория ~/.termux/boot/"
+    fi
+    
+    # Създаване на скрипта
+    cat > ~/.termux/boot/start-sshd << 'EOF'
 #!/data/data/com.termux/files/usr/bin/sh
 termux-wake-lock
 sshd
 EOF
-            
-            # Правене на скрипта изпълним
-            chmod +x ~/.termux/boot/start-sshd
-            
-            echo "Създаден е скрипт ~/.termux/boot/start-sshd"
-            echo ""
-            echo "Съдържание на скрипта:"
-            echo "======================"
-            cat ~/.termux/boot/start-sshd
-            echo "======================"
-            echo ""
-            echo "Този скрипт ще се изпълни при всяко стартиране на устройството"
-            ;;
-            
-        0)
-            return
-            ;;
-            
-        *)
-            echo "Невалиден избор!"
-            ;;
-    esac
+    
+    # Правене на скрипта изпълним
+    chmod +x ~/.termux/boot/start-sshd
+    
+    echo "Създаден е скрипт ~/.termux/boot/start-sshd"
+    echo ""
+    
+    echo "=== НАСТРОЙКАТА ЗАВЪРШИ ==="
+    echo "SSH услугата е настроена за автоматично стартиране:"
+    echo "- При всяко стартиране на устройството (чрез Termux:Boot)"
+    echo "- При всяко стартиране на Termux (чрез termux-services)"
+    echo ""
+    echo "Порт на SSH сървъра: 8022"
+    echo "За да спрете услугата: sv down sshd"
+    echo "За да деактивирате автоматичното стартиране: sv-disable sshd"
 }
 
 while true; do
